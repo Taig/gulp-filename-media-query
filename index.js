@@ -12,32 +12,18 @@
   util = require('gulp-util');
 
   filenameMediaQuery = function() {
-    var collect, extensions, files, process, regex, units;
+    var extensions, regex, units;
     units = ['ch', 'cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 'rem', 'vh', 'vw'];
     extensions = ['css', 'sass', 'scss'];
     regex = {
       file: new RegExp("/(([<>]\\d+(" + (units.join('|')) + "))|(=\\d+(" + (units.join('|')) + ")-\\d+(" + (units.join('|')) + ")))\\.(" + (extensions.join('|')) + ")$"),
       value: new RegExp("[<>=](.+)\\.(" + (extensions.join('|')) + ")")
     };
-    files = {};
-    collect = function(file, _, callback) {
-      var name;
+    return through.obj(function(file, _, callback) {
+      var dimension, name, query, sign, suffix;
       if (regex.file.test(file.path)) {
-        name = path.basename(file.path);
-        if (!files.hasOwnProperty(name)) {
-          files[name] = [];
-        }
-        files[name].push(file);
-      } else {
-        this.push(file);
-      }
-      return callback();
-    };
-    process = function(callback) {
-      var dimension, group, name, query, sign, suffix;
-      for (name in files) {
-        group = files[name];
         query = '@media screen and ';
+        name = path.basename(file.path);
         sign = name[0];
         suffix = path.extname(name).substring(1);
         dimension = name.replace(regex.value, '$1');
@@ -53,29 +39,20 @@
             query += "( min-width: " + dimension[0] + " ) and ( max-width: " + dimension[1] + " )";
             break;
           default:
-            throw new util.PluginError('gulp-filename-media-query', 'Illegal file extension');
+            throw new util.PluginError('gulp-filename-media-query', 'Illegal file prefix');
         }
         if (suffix === 'sass') {
-          query += '\n\t' + group.map(function(file) {
-            return file.contents.toString().split('\n').join('\n\t');
-          }).join('\n');
+          query += '\n\t' + file.contents.toString().split('\n').join('\n\t');
         } else {
           query += ' {\n';
-          query += group.map(function(file) {
-            return file.contents.toString();
-          }).join('\n');
+          query += file.contents.toString().join('\n');
           query += '\n}';
         }
-        this.push(new util.File({
-          cwd: group[0].cwd,
-          base: group[0].base,
-          path: group[0].path,
-          contents: new Buffer(query)
-        }));
+        file.contents = new buffer(query);
       }
+      this.push(file);
       return callback();
-    };
-    return through.obj(collect, process);
+    });
   };
 
   module.exports = filenameMediaQuery;

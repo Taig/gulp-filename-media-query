@@ -31,26 +31,11 @@ filenameMediaQuery = ->
 		file: new RegExp "/(([<>]\\d+(#{units.join '|'}))|(=\\d+(#{units.join '|'})-\\d+(#{units.join '|'})))\\.(#{extensions.join '|'})$"
 		value: new RegExp "[<>=](.+)\\.(#{extensions.join '|'})"
 
-	files = {}
-
-	collect = ( file, _, callback ) ->
-		# Check whether the file is a valid media query stylesheet
+	through.obj ( file, _, callback ) ->
 		if regex.file.test file.path
-			name = path.basename file.path
-
-			if not files.hasOwnProperty name
-				files[name] = []
-
-			files[name].push file
-		else
-			this.push file
-
-		callback()
-
-	process = ( callback ) ->
-		for name, group of files
-			# Create proper media query
+			# Prepare media query
 			query = '@media screen and '
+			name = path.basename file.path
 			sign = name[0]
 			suffix = path.extname( name ).substring 1
 			dimension = name.replace regex.value, '$1'
@@ -62,24 +47,18 @@ filenameMediaQuery = ->
 					dimension = dimension.split '-'
 					query += "( min-width: #{dimension[0]} ) and ( max-width: #{dimension[1]} )"
 				else
-					throw new util.PluginError 'gulp-filename-media-query', 'Illegal file extension'
+					throw new util.PluginError 'gulp-filename-media-query', 'Illegal file prefix'
 
 			if suffix is 'sass'
-				query += '\n\t' + group.map( ( file ) -> file.contents.toString().split( '\n' ).join( '\n\t' ) ).join( '\n' )
+				query += '\n\t' + file.contents.toString().split( '\n' ).join '\n\t'
 			else
 				query += ' {\n'
-				query += group.map( ( file ) -> file.contents.toString() ).join '\n'
+				query += file.contents.toString().join '\n'
 				query += '\n}'
 
-			this.push new util.File(
-				cwd: group[0].cwd
-				base: group[0].base
-				path: group[0].path
-				contents: new Buffer query
-			)
+			file.contents = new buffer query
 
+		this.push file
 		callback()
-
-	through.obj collect, process
 
 module.exports = filenameMediaQuery
