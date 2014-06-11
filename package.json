@@ -31,7 +31,6 @@
     "through2": "^0.5.1"
   },
   "devDependencies": {
-    "gulp-filename-media-query": "^1.0.0",
     "mocha": "*"
   }
 }
