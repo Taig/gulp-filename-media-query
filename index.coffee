@@ -27,7 +27,7 @@ filenameMediaQuery = ->
 		'scss'
 	]
 
-	regex = 
+	regex =
 		file: new RegExp "/(([<>]\\d+(#{units.join '|'}))|(=\\d+(#{units.join '|'})-\\d+(#{units.join '|'})))\\.(#{extensions.join '|'})$"
 		value: new RegExp "[<>=](.+)\\.(#{extensions.join '|'})"
 
