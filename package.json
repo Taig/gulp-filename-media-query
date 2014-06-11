@@ -18,7 +18,11 @@
     "index.js"
   ],
   "keywords": [
-    "gulpplugin"
+    "gulpplugin",
+    "css",
+    "scss",
+    "sass",
+    "media query"
   ],
   "dependencies": {
     "buffer": "^2.3.2",
