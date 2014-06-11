@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Wrap CSS files with media queries indicated by their names",
   "license": "MIT",
-  "repository": "taig/xxx",
+  "repository": "taig/gulp-filename-media-query",
   "author": {
     "name": "Niklas Klein",
     "email": "my.taig@gmail.com"
