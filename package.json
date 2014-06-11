@@ -1,0 +1,33 @@
+{
+  "name": "gulp-filename-media-query",
+  "version": "1.0.0",
+  "description": "Wrap CSS files with media queries indicated by their names",
+  "license": "MIT",
+  "repository": "taig/xxx",
+  "author": {
+    "name": "Niklas Klein",
+    "email": "my.taig@gmail.com"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "gulpplugin"
+  ],
+  "dependencies": {
+    "buffer": "^2.3.2",
+    "gulp-util": "^2.2.16",
+    "path": "^0.4.9",
+    "through2": "^0.5.1"
+  },
+  "devDependencies": {
+    "gulp-filename-media-query": "^1.0.0",
+    "mocha": "*"
+  }
+}
