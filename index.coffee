@@ -32,7 +32,11 @@ filenameMediaQuery = ->
 		value: new RegExp "[<>=](.+)\\.(#{extensions.join '|'})"
 
 	through.obj ( file, _, callback ) ->
-		if regex.file.test file.path
+		if file.isStream()
+			callback()
+			return this.emit 'error', new util.PluginError( 'gulp-filename-media-query', 'Streaming not supported' )
+
+		if not file.isNull() and regex.file.test file.path
 			# Prepare media query
 			query = '@media screen and '
 			name = path.basename file.path
@@ -47,7 +51,7 @@ filenameMediaQuery = ->
 					dimension = dimension.split '-'
 					query += "( min-width: #{dimension[0]} ) and ( max-width: #{dimension[1]} )"
 				else
-					throw new util.PluginError 'gulp-filename-media-query', 'Illegal file prefix'
+					return this.emit 'error', new util.PluginError 'gulp-filename-media-query', 'Illegal file prefix'
 
 			if suffix is 'sass'
 				query += '\n\t' + file.contents.toString().split( '\n' ).join '\n\t'

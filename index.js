@@ -21,7 +21,11 @@
     };
     return through.obj(function(file, _, callback) {
       var dimension, name, query, sign, suffix;
-      if (regex.file.test(file.path)) {
+      if (file.isStream()) {
+        callback();
+        return this.emit('error', new util.PluginError('gulp-filename-media-query', 'Streaming not supported'));
+      }
+      if (!file.isNull() && regex.file.test(file.path)) {
         query = '@media screen and ';
         name = path.basename(file.path);
         sign = name[0];
