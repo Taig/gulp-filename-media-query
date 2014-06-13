@@ -1,11 +1,12 @@
 'use strict'
 
+_ = require 'lodash'
 buffer = require( 'buffer' ).Buffer
 path = require 'path'
 through = require 'through2'
 util = require 'gulp-util'
 
-filenameMediaQuery = ->
+filenameMediaQuery = ( options ) ->
 	units = [
 		'ch'
 		'cm'
@@ -21,44 +22,78 @@ filenameMediaQuery = ->
 		'vw'
 	]
 
-	extensions = [
-		'css'
-		'sass'
-		'scss'
-	]
-
-	regex =
-		file: new RegExp "/(([<>]\\d+(#{units.join '|'}))|(=\\d+(#{units.join '|'})-\\d+(#{units.join '|'})))\\.(#{extensions.join '|'})$"
-		value: new RegExp "[<>=](.+)\\.(#{extensions.join '|'})"
+	options = _.merge {
+		mediaType: null
+	}, options
 
 	through.obj ( file, _, callback ) ->
 		if file.isStream()
 			callback()
-			return this.emit 'error', new util.PluginError( 'gulp-filename-media-query', 'Streaming not supported' )
+			return this.emit 'error', new util.PluginError( 'gulp-filename-media-query', 'Streaming is not supported' )
 
-		if not file.isNull() and regex.file.test file.path
-			# Prepare media query
-			query = '@media screen and '
-			name = path.basename file.path
-			sign = name[0]
-			suffix = path.extname( name ).substring 1
-			dimension = name.replace regex.value, '$1'
+		if file.isNull()
+			this.push file
+			return callback()
 
-			switch sign
-				when '<' then query += "( max-width: #{dimension} )"
-				when '>' then query += "( min-width: #{dimension} )"
-				when '='
-					dimension = dimension.split '-'
-					query += "( min-width: #{dimension[0]} ) and ( max-width: #{dimension[1]} )"
-				else
-					return this.emit 'error', new util.PluginError 'gulp-filename-media-query', 'Illegal file prefix'
+		name = path.basename( file.path )
 
-			if suffix is 'sass'
-				query += '\n\t' + file.contents.toString().split( '\n' ).join '\n\t'
+		if name[0] is '@' and file.contents.length
+			extension = path.extname( name ).substr 1
+
+			if extension isnt 'css'
+				callback()
+				return this.emit(
+					'error',
+					new util.PluginError 'gulp-filename-media-query', "Only *.css files supported (*.#{extension})"
+				)
+
+			name = name.substr( 1, name.indexOf( ".css" ) - 1 )
+			properties = name.split '--'
+			expressions = []
+
+			# Extract media type or fall back to options default
+			if /^[a-z-]+$/.test properties[0]
+				mediaType = properties.shift()
 			else
-				query += ' {\n'
-				query += file.contents.toString().join '\n'
-				query += '\n}'
+				mediaType = options.mediaType
+
+			# Reformat expressions
+			for expression in properties
+				feature = expression.match( new RegExp( "^([\\a-z-+]+)\\d*" ) )[1]
+				value = null
+
+				if feature.length < expression.length
+					value = expression.match( new RegExp( "(\\d+(?:#{units.join '|'}))$" ) )[1]
+
+				# Detect and replace shortcuts
+				switch feature
+					when 'w+' then feature = 'min-width'
+					when 'w-' then feature = 'max-width'
+					when 'h+' then feature = 'min-height'
+					when 'h-' then feature = 'max-height'
+
+				# Remove trailing '-'
+				if feature[feature.length - 1] is '-'
+					feature = feature.substr( 0, feature.length - 1 )
+
+				expressions.push { feature: feature, value: value }
+
+			# Build media query
+			query = '@media '
+
+			if mediaType isnt null
+				query += mediaType
+
+			if expressions.length
+				query += ' and ' + expressions.map(
+					( expression ) ->
+						if expression.value is null
+							"( #{expression.feature} )"
+						else
+							"( #{expression.feature}: #{expression.value} )"
+				).join ' and '
+
+			query += " {\n\t#{file.contents.toString().split( '\n' ).slice( 0, -1 ).join( '\n\t' )}\n}"
 
 			file.contents = new buffer query
 

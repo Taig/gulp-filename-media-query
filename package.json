@@ -27,6 +27,7 @@
   "dependencies": {
     "buffer": "^2.3.2",
     "gulp-util": "^2.2.16",
+    "lodash": "^2.4.1",
     "path": "^0.4.9",
     "through2": "^0.5.1"
   },
