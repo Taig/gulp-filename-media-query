@@ -37,7 +37,7 @@ filenameMediaQuery = ( options ) ->
 
 		name = path.basename( file.path )
 
-		if name[0] is '@' and file.contents.length
+		if name[0] is '@'
 			extension = path.extname( name ).substr 1
 
 			if extension isnt 'css'
@@ -59,11 +59,17 @@ filenameMediaQuery = ( options ) ->
 
 			# Reformat expressions
 			for expression in properties
-				feature = expression.match( new RegExp( "^([\\a-z-+]+)\\d*" ) )[1]
-				value = null
-
-				if feature.length < expression.length
-					value = expression.match( new RegExp( "(\\d+(?:#{units.join '|'}))$" ) )[1]
+				try
+					feature = expression.match( new RegExp( "^([\\a-z-+]+)\\d*" ) )[1]
+					value = null
+	
+					if feature.length < expression.length
+						value = expression.match( new RegExp( "(\\d+(?:#{units.join '|'}))$" ) )[1]
+				catch error
+					return this.emit(
+						'error',
+						new util.PluginError 'gulp-filename-media-query', "Malformed filename syntax (#{expression})"
+					)
 
 				# Detect and replace shortcuts
 				switch feature
@@ -93,7 +99,10 @@ filenameMediaQuery = ( options ) ->
 							"( #{expression.feature}: #{expression.value} )"
 				).join ' and '
 
-			query += " {\n\t#{file.contents.toString().split( '\n' ).slice( 0, -1 ).join( '\n\t' )}\n}"
+			query +=
+				' {' +
+				( if file.contents.length then "\n\t#{file.contents.toString().split( '\n' ).join( '\n\t' )}\n" else '' ) +
+				'}'
 
 			file.contents = new buffer query
 

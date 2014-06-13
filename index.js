@@ -20,7 +20,7 @@
       mediaType: null
     }, options);
     return through.obj(function(file, _, callback) {
-      var expression, expressions, extension, feature, mediaType, name, properties, query, value, _i, _len;
+      var error, expression, expressions, extension, feature, mediaType, name, properties, query, value, _i, _len;
       if (file.isStream()) {
         callback();
         return this.emit('error', new util.PluginError('gulp-filename-media-query', 'Streaming is not supported'));
@@ -30,7 +30,7 @@
         return callback();
       }
       name = path.basename(file.path);
-      if (name[0] === '@' && file.contents.length) {
+      if (name[0] === '@') {
         extension = path.extname(name).substr(1);
         if (extension !== 'css') {
           callback();
@@ -46,10 +46,15 @@
         }
         for (_i = 0, _len = properties.length; _i < _len; _i++) {
           expression = properties[_i];
-          feature = expression.match(new RegExp("^([\\a-z-+]+)\\d*"))[1];
-          value = null;
-          if (feature.length < expression.length) {
-            value = expression.match(new RegExp("(\\d+(?:" + (units.join('|')) + "))$"))[1];
+          try {
+            feature = expression.match(new RegExp("^([\\a-z-+]+)\\d*"))[1];
+            value = null;
+            if (feature.length < expression.length) {
+              value = expression.match(new RegExp("(\\d+(?:" + (units.join('|')) + "))$"))[1];
+            }
+          } catch (_error) {
+            error = _error;
+            return this.emit('error', new util.PluginError('gulp-filename-media-query', "Malformed filename syntax (" + expression + ")"));
           }
           switch (feature) {
             case 'w+':
@@ -85,7 +90,7 @@
             }
           }).join(' and ');
         }
-        query += " {\n\t" + (file.contents.toString().split('\n').slice(0, -1).join('\n\t')) + "\n}";
+        query += ' {' + (file.contents.length ? "\n\t" + (file.contents.toString().split('\n').join('\n\t')) + "\n" : '') + '}';
         file.contents = new buffer(query);
       }
       this.push(file);
