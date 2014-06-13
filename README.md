@@ -14,6 +14,8 @@ The full CSS media query language features are [available as BNF](https://develo
 
 Multiple expressions are linked with a double dash (`--`).
 
+Commonly used expressions `min-width`, `max-width`, `min-height` and `max-height` can be abbreviated as `w+`, `w-`, `h+` and `h-`.
+
 ## Examples
 
 Valid filenames:
@@ -24,3 +26,4 @@ Valid filenames:
 - `@min-width-30em`
 - `@screen--color`
 - `@min-width-500px--max-width-800px`
+- `@w+500px`
