@@ -17,7 +17,10 @@ describe 'gulp-filename-media-query', ->
 			.src 'test/fixture/empty/@screen.css'
 			.pipe filenameMediaQuery()
 			.pipe concat ( files ) ->
-				files[0].contents.toString().should.containEql '@media screen'
+				files[0]
+					.contents
+					.toString()
+					.should.containEql 'screen'
 				done()
 
 	it 'should refuse to process invalid filename syntax', ( done ) ->
@@ -47,7 +50,7 @@ describe 'gulp-filename-media-query', ->
 				files[0]
 					.contents
 					.toString()
-					.should.containEql '@media print and ( min-width: 400px ) and ( max-width: 800px )'
+					.should.containEql 'print and ( min-width: 400px ) and ( max-width: 800px )'
 				done()
 
 	it 'should automatically prefix a media type if supplied as an option', ( done ) ->
@@ -58,5 +61,5 @@ describe 'gulp-filename-media-query', ->
 				files[0]
 					.contents
 					.toString()
-					.should.containEql '@media tv'
+					.should.containEql 'tv'
 				done()

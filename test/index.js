@@ -19,7 +19,7 @@
     });
     it('should wrap empty files', function(done) {
       return gulp.src('test/fixture/empty/@screen.css').pipe(filenameMediaQuery()).pipe(concat(function(files) {
-        files[0].contents.toString().should.containEql('@media screen');
+        files[0].contents.toString().should.containEql('screen');
         return done();
       }));
     });
@@ -37,7 +37,7 @@
     });
     it('should support sophisticated media queries', function(done) {
       return gulp.src('test/fixture/valid/@print--w+400px--w-800px.css').pipe(filenameMediaQuery()).pipe(concat(function(files) {
-        files[0].contents.toString().should.containEql('@media print and ( min-width: 400px ) and ( max-width: 800px )');
+        files[0].contents.toString().should.containEql('print and ( min-width: 400px ) and ( max-width: 800px )');
         return done();
       }));
     });
@@ -45,7 +45,7 @@
       return gulp.src('test/fixture/valid/@min-width-400px.css').pipe(filenameMediaQuery({
         mediaType: 'tv'
       })).pipe(concat(function(files) {
-        files[0].contents.toString().should.containEql('@media tv');
+        files[0].contents.toString().should.containEql('tv');
         return done();
       }));
     });
