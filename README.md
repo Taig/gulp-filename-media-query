@@ -16,6 +16,8 @@ Multiple expressions are linked with a double dash (`--`).
 
 Commonly used expressions `min-width`, `max-width`, `min-height` and `max-height` can be abbreviated as `w+`, `w-`, `h+` and `h-`.
 
+## Options
+
 The plugin accepts an `options` object parameter with the following keys:
 
 ##### `mediaType`
