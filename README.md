@@ -36,3 +36,15 @@ Valid filenames:
 - `@screen--color`
 - `@min-width-500px--max-width-800px`
 - `@w+500px`
+
+Gulp configuration:
+
+```
+gulp
+  .src( '**/*.scss' )
+  .pipe( sass() )
+  .pipe( filenameMediaQuery( { mediaType: 'screen' } ) )
+  .pipe( concat( 'main.css' ) )
+  .pipe( groupMediaQueries() )
+  .pipe( gulp.dest( 'assets/' ) )
+```
