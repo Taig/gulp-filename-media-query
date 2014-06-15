@@ -64,9 +64,11 @@ filenameMediaQuery = ( options ) ->
 				try
 					feature = expression.match( new RegExp( "^([\\a-z-+]+)\\d*" ) )[1]
 					value = null
-	
+
 					if feature.length < expression.length
-						value = expression.match( new RegExp( "(\\d+(?:#{units.join '|'}))$" ) )[1]
+						regex = expression.match( new RegExp( "(\\d+)(#{units.join '|'})$" ) )
+						value = regex[1]
+						unit = regex[2]
 				catch error
 					return this.emit(
 						'error',
@@ -84,12 +86,12 @@ filenameMediaQuery = ( options ) ->
 				if feature[feature.length - 1] is '-'
 					feature = feature.substr( 0, feature.length - 1 )
 
-				expressions.push { feature: feature, value: value }
+				expressions.push { feature: feature, value: value, unit: unit }
 
 			# Allow user to manipulate extracted media query expressions
-			callback = options.on.evaluation( mediaType, expressions )
-			mediaType = callback[0]
-			expressions = callback[0]
+			evaluation = options.on.evaluation( mediaType, expressions )
+			mediaType = evaluation[0]
+			expressions = evaluation[1]
 
 			# Build media query
 			query = '@media '
@@ -103,7 +105,7 @@ filenameMediaQuery = ( options ) ->
 						if expression.value is null
 							"( #{expression.feature} )"
 						else
-							"( #{expression.feature}: #{expression.value} )"
+							"( #{expression.feature}: #{expression.value}#{expression.unit} )"
 				).join ' and '
 
 			query +=

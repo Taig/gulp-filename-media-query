@@ -17,10 +17,15 @@
     var units;
     units = ['ch', 'cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 'rem', 'vh', 'vw'];
     options = _.merge({
-      mediaType: null
+      mediaType: null,
+      on: {
+        evaluation: function(mediaType, expressions) {
+          return [mediaType, expressions];
+        }
+      }
     }, options);
     return through.obj(function(file, _, callback) {
-      var error, expression, expressions, extension, feature, mediaType, name, properties, query, value, _i, _len;
+      var error, evaluation, expression, expressions, extension, feature, mediaType, name, properties, query, regex, unit, value, _i, _len;
       if (file.isStream()) {
         callback();
         return this.emit('error', new util.PluginError('gulp-filename-media-query', 'Streaming is not supported'));
@@ -50,7 +55,9 @@
             feature = expression.match(new RegExp("^([\\a-z-+]+)\\d*"))[1];
             value = null;
             if (feature.length < expression.length) {
-              value = expression.match(new RegExp("(\\d+(?:" + (units.join('|')) + "))$"))[1];
+              regex = expression.match(new RegExp("(\\d+)(" + (units.join('|')) + ")$"));
+              value = regex[1];
+              unit = regex[2];
             }
           } catch (_error) {
             error = _error;
@@ -74,9 +81,13 @@
           }
           expressions.push({
             feature: feature,
-            value: value
+            value: value,
+            unit: unit
           });
         }
+        evaluation = options.on.evaluation(mediaType, expressions);
+        mediaType = evaluation[0];
+        expressions = evaluation[1];
         query = '@media ';
         if (mediaType !== null) {
           query += mediaType;
@@ -86,7 +97,7 @@
             if (expression.value === null) {
               return "( " + expression.feature + " )";
             } else {
-              return "( " + expression.feature + ": " + expression.value + " )";
+              return "( " + expression.feature + ": " + expression.value + expression.unit + " )";
             }
           }).join(' and ');
         }
