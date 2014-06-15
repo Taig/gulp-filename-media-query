@@ -63,3 +63,16 @@ describe 'gulp-filename-media-query', ->
 					.toString()
 					.should.containEql 'tv'
 				done()
+
+	it 'should allow manipulating the expressions with the evaluation callback', ( done ) ->
+		gulp
+			.src 'test/fixture/valid/@print--w+400px--w-800px.css'
+			.pipe filenameMediaQuery
+				on:
+					evaluation: ( _, expressions ) -> [ _, expressions.map( ( _ ) -> _.unit = 'rem'; _ ) ]
+			.pipe concat ( files ) ->
+				files[0]
+					.contents
+					.toString()
+					.should.containEql '400rem'
+				done()

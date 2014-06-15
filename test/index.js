@@ -41,11 +41,28 @@
         return done();
       }));
     });
-    return it('should automatically prefix a media type if supplied as an option', function(done) {
+    it('should automatically prefix a media type if supplied as an option', function(done) {
       return gulp.src('test/fixture/valid/@min-width-400px.css').pipe(filenameMediaQuery({
         mediaType: 'tv'
       })).pipe(concat(function(files) {
         files[0].contents.toString().should.containEql('tv');
+        return done();
+      }));
+    });
+    return it('should allow manipulating the expressions with the evaluation callback', function(done) {
+      return gulp.src('test/fixture/valid/@print--w+400px--w-800px.css').pipe(filenameMediaQuery({
+        on: {
+          evaluation: function(_, expressions) {
+            return [
+              _, expressions.map(function(_) {
+                _.unit = 'rem';
+                return _;
+              })
+            ];
+          }
+        }
+      })).pipe(concat(function(files) {
+        files[0].contents.toString().should.containEql('400rem');
         return done();
       }));
     });
