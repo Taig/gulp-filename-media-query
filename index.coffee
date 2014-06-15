@@ -90,6 +90,14 @@ filenameMediaQuery = ( options ) ->
 
 			# Allow user to manipulate extracted media query expressions
 			evaluation = options.on.evaluation( mediaType, expressions )
+
+			if not evaluation or evaluation.length isnt 2
+				callback()
+				return this.emit(
+					'error',
+					new util.PluginError 'gulp-filename-media-query', "Invalid evaluation callback method given"
+				)
+
 			mediaType = evaluation[0]
 			expressions = evaluation[1]
 

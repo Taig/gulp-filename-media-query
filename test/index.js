@@ -49,7 +49,7 @@
         return done();
       }));
     });
-    return it('should allow manipulating the expressions with the evaluation callback', function(done) {
+    it('should allow manipulating the expressions with the evaluation callback', function(done) {
       return gulp.src('test/fixture/valid/@print--w+400px--w-800px.css').pipe(filenameMediaQuery({
         on: {
           evaluation: function(_, expressions) {
@@ -65,6 +65,18 @@
         files[0].contents.toString().should.containEql('400rem');
         return done();
       }));
+    });
+    return it('should mess up when evaluation callback return value is incorrect', function(done) {
+      return gulp.src('test/fixture/valid/@screen.css').pipe(filenameMediaQuery({
+        on: {
+          evaluation: function() {
+            return null;
+          }
+        }
+      })).on('error', function(error) {
+        should.exist(error);
+        return done();
+      });
     });
   });
 

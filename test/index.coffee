@@ -76,3 +76,13 @@ describe 'gulp-filename-media-query', ->
 					.toString()
 					.should.containEql '400rem'
 				done()
+
+	it 'should mess up when evaluation callback return value is incorrect', ( done ) ->
+		gulp
+			.src 'test/fixture/valid/@screen.css'
+			.pipe filenameMediaQuery
+				on:
+					evaluation: -> null
+			.on 'error', ( error ) ->
+				should.exist error
+				done()

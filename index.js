@@ -86,6 +86,10 @@
           });
         }
         evaluation = options.on.evaluation(mediaType, expressions);
+        if (!evaluation || evaluation.length !== 2) {
+          callback();
+          return this.emit('error', new util.PluginError('gulp-filename-media-query', "Invalid evaluation callback method given"));
+        }
         mediaType = evaluation[0];
         expressions = evaluation[1];
         query = '@media ';
