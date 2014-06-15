@@ -26,7 +26,7 @@ default: `null`
 Prepends a specified media type (such as `screen` or `print`) to every generated media query that does not provide a media type in its filename.
 
 ##### `on.evaluation`
-default: `function( mediaType, expressions ) { return [ mediaType, expressions ] }`
+default: `function( mediaType, expressions ) { return [ mediaType, expressions ]; }`
 
 Callback method that allows to modify the evaluated media query (e.g. converting `px` units to `em`).
 
