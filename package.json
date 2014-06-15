@@ -1,6 +1,6 @@
 {
   "name": "gulp-filename-media-query",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Wrap CSS files with media queries indicated by their names",
   "license": "MIT",
   "repository": "taig/gulp-filename-media-query",
