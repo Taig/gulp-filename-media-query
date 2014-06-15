@@ -24,6 +24,8 @@ filenameMediaQuery = ( options ) ->
 
 	options = _.merge {
 		mediaType: null
+		on:
+			evaluation: ( mediaType, expressions ) -> [ mediaType, expressions ]
 	}, options
 
 	through.obj ( file, _, callback ) ->
@@ -83,6 +85,11 @@ filenameMediaQuery = ( options ) ->
 					feature = feature.substr( 0, feature.length - 1 )
 
 				expressions.push { feature: feature, value: value }
+
+			# Allow user to manipulate extracted media query expressions
+			callback = options.on.evaluation( mediaType, expressions )
+			mediaType = callback[0]
+			expressions = callback[0]
 
 			# Build media query
 			query = '@media '
