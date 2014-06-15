@@ -30,6 +30,9 @@ default: `function( mediaType, expressions ) { return [ mediaType, expressions ]
 
 Callback method that allows to modify the evaluated media query (e.g. converting `px` units to `em`).
 
+If a custom evaluation method is given it has to return an array of length 2 with the first item being the media type
+(may be `null`) and the second item an array of expressions (`{ feature: _, value: _, unit: _ }`).
+
 ## Examples
 
 Valid filenames:
