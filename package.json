@@ -20,8 +20,6 @@
   "keywords": [
     "gulpplugin",
     "css",
-    "scss",
-    "sass",
     "media query"
   ],
   "dependencies": {
