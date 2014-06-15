@@ -44,7 +44,7 @@ Valid filenames:
 
 Gulp configuration:
 
-```
+```js
 gulp
   .src( '**/*.scss' )
   .pipe( sass() )
