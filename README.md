@@ -25,6 +25,11 @@ default: `null`
 
 Prepends a specified media type (such as `screen` or `print`) to every generated media query that does not provide a media type in its filename.
 
+##### `on.evaluation`
+default: `function( mediaType, expressions ) { return [ mediaType, expressions ] }`
+
+Callback method that allows to modify the evaluated media query (e.g. converting `px` units to `em`).
+
 ## Examples
 
 Valid filenames:
@@ -43,7 +48,14 @@ Gulp configuration:
 gulp
   .src( '**/*.scss' )
   .pipe( sass() )
-  .pipe( filenameMediaQuery( { mediaType: 'screen' } ) )
+  .pipe( filenameMediaQuery( {
+    mediaType: 'screen',
+    on: {
+      evaluation: function( mediaType, expressions ) {
+        return [ mediaType, expressions.map( function( _ ) { _.unit = 'em'; } ) ]
+      }
+    }
+   } ) )
   .pipe( concat( 'main.css' ) )
   .pipe( groupMediaQueries() )
   .pipe( gulp.dest( 'assets/' ) )
