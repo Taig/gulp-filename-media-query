@@ -20,12 +20,12 @@ Commonly used expressions `min-width`, `max-width`, `min-height` and `max-height
 
 The plugin accepts an `options` object parameter with the following keys:
 
-##### `mediaType`
+##### `mediaType` : `null | String`
 default: `null`
 
 Prepends a specified media type (such as `screen` or `print`) to every generated media query that does not provide a media type in its filename.
 
-##### `on.evaluation`
+##### `on.evaluation` : `function( mediaType, expressions )`
 default: `function( mediaType, expressions ) { return [ mediaType, expressions ]; }`
 
 Callback method that allows to modify the evaluated media query (e.g. converting `px` units to `em`).
@@ -33,8 +33,10 @@ Callback method that allows to modify the evaluated media query (e.g. converting
 If a custom evaluation method is given it has to return an array of length 2 with the first item being the media type
 (may be `null`) and the second item an array of expressions (`{ feature: _, value: _, unit: _ }`).
 
-##### `on.build`
-default: `function( mediaType, expressions, block, suffix ) { return [String](index.coffee#L29) }`
+##### `on.build` : `function( mediaType, expressions, block, suffix )`
+default: [String](index.coffee#L29) (Vanilla CSS media query)
+
+Allows to hook into the media query generation process in order to support preprocessor favours such as SCSS or SASS.
 
 ## Examples
 
