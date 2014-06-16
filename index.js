@@ -58,9 +58,9 @@
         extension = path.extname(name).substr(1);
         if (options.suffix !== null && __indexOf.call(options.suffix, extension) < 0) {
           callback();
-          return this.emit('error', new util.PluginError('gulp-filename-media-query', "Only *.css files supported (*." + extension + ")"));
+          return this.emit('error', new util.PluginError('gulp-filename-media-query', "Only " + options.suffix + " files supported (*." + extension + ")"));
         }
-        name = name.substr(1, name.indexOf(".css") - 1);
+        name = name.substr(1, name.indexOf("." + extension) - 1);
         properties = name.split('--');
         expressions = [];
         if (/^[a-z-]+$/.test(properties[0])) {
