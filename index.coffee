@@ -24,8 +24,9 @@ filenameMediaQuery = ( options ) ->
 
 	options = _.merge {
 		mediaType: null
+		suffix: null
 		on:
-			build: ( mediaType, expressions, block ) ->
+			build: ( mediaType, expressions, block, suffix ) ->
 				query = '@media '
 
 				if mediaType isnt null
@@ -58,7 +59,7 @@ filenameMediaQuery = ( options ) ->
 		if name[0] is '@'
 			extension = path.extname( name ).substr 1
 
-			if extension isnt 'css'
+			if options.suffix isnt null and extension not in options.suffix
 				callback()
 				return this.emit(
 					'error',
@@ -115,7 +116,7 @@ filenameMediaQuery = ( options ) ->
 				)
 
 			# Build media query
-			file.contents = new buffer( options.on.build evaluation[0], evaluation[1], file.contents.toString() )
+			file.contents = new buffer( options.on.build evaluation[0], evaluation[1], file.contents.toString(), extension )
 
 		this.push file
 		callback()

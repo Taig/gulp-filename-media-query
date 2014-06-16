@@ -12,7 +12,9 @@
 
   describe('gulp-filename-media-query', function() {
     it('should fail with illegal file extensions', function(done) {
-      return gulp.src('test/fixture/invalid/@screen.scss').pipe(filenameMediaQuery()).on('error', function(error) {
+      return gulp.src('test/fixture/invalid/@screen.scss').pipe(filenameMediaQuery({
+        suffix: ['css']
+      })).on('error', function(error) {
         should.exist(error);
         return done();
       });
