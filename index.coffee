@@ -25,6 +25,22 @@ filenameMediaQuery = ( options ) ->
 	options = _.merge {
 		mediaType: null
 		on:
+			build: ( mediaType, expressions, block ) ->
+				query = '@media '
+
+				if mediaType isnt null
+					query += mediaType
+
+				if expressions.length
+					query += ' and ' + expressions.map(
+						( _ ) ->
+							if _.value is null
+								"( #{ _.feature } )"
+							else
+								"( #{ _.feature }: #{ _.value }#{ _.unit } )"
+					).join ' and '
+
+				query += ' {' + ( if block.length then "\n\t#{ block.split( '\n' ).join( '\n\t' ) }\n" else '' ) + '}'
 			evaluation: ( mediaType, expressions ) -> [ mediaType, expressions ]
 	}, options
 
@@ -98,30 +114,8 @@ filenameMediaQuery = ( options ) ->
 					new util.PluginError 'gulp-filename-media-query', "Invalid evaluation callback method given"
 				)
 
-			mediaType = evaluation[0]
-			expressions = evaluation[1]
-
 			# Build media query
-			query = '@media '
-
-			if mediaType isnt null
-				query += mediaType
-
-			if expressions.length
-				query += ' and ' + expressions.map(
-					( expression ) ->
-						if expression.value is null
-							"( #{expression.feature} )"
-						else
-							"( #{expression.feature}: #{expression.value}#{expression.unit} )"
-				).join ' and '
-
-			query +=
-				' {' +
-				( if file.contents.length then "\n\t#{file.contents.toString().split( '\n' ).join( '\n\t' )}\n" else '' ) +
-				'}'
-
-			file.contents = new buffer query
+			file.contents = new buffer( options.on.build evaluation[0], evaluation[1], file.contents.toString() )
 
 		this.push file
 		callback()
