@@ -33,6 +33,9 @@ Callback method that allows to modify the evaluated media query (e.g. converting
 If a custom evaluation method is given it has to return an array of length 2 with the first item being the media type
 (may be `null`) and the second item an array of expressions (`{ feature: _, value: _, unit: _ }`).
 
+##### `on.build`
+default: `function( mediaType, expressions, block, suffix ) { return [String](index.coffee#L29) }`
+
 ## Examples
 
 Valid filenames:
