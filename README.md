@@ -36,7 +36,7 @@ If a custom evaluation method is given it has to return an array of length 2 wit
 ##### `on.build` : `function( mediaType, expressions, block, suffix )`
 default: [String](index.coffee#L29) (Vanilla CSS media query)
 
-Allows to hook into the media query generation process in order to support preprocessor favours such as SCSS or SASS.
+Allows to hook into the media query generation process in order to support preprocessor flavours such as SCSS or SASS.
 
 ## Examples
 
