@@ -19,9 +19,9 @@
     units = ['ch', 'cm', 'em', 'ex', 'in', 'mm', 'pc', 'pt', 'px', 'rem', 'vh', 'vw'];
     options = _.merge({
       mediaType: null,
-      suffix: null,
+      suffix: ['css'],
       on: {
-        build: function(mediaType, expressions, block, suffix) {
+        build: function(mediaType, expressions, block) {
           var query;
           query = '@media ';
           if (mediaType !== null) {

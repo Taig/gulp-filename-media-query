@@ -7,7 +7,7 @@ describe 'gulp-filename-media-query', ->
 	it 'should fail with illegal file extensions', ( done ) ->
 		gulp
 			.src 'test/fixture/invalid/@screen.scss'
-			.pipe filenameMediaQuery suffix: [ 'css' ]
+			.pipe filenameMediaQuery()
 			.on 'error', ( error ) ->
 				should.exist error
 				done()

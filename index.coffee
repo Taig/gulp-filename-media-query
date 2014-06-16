@@ -24,9 +24,9 @@ filenameMediaQuery = ( options ) ->
 
 	options = _.merge {
 		mediaType: null
-		suffix: null
+		suffix: [ 'css' ]
 		on:
-			build: ( mediaType, expressions, block, suffix ) ->
+			build: ( mediaType, expressions, block ) ->
 				query = '@media '
 
 				if mediaType isnt null
