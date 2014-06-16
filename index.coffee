@@ -41,7 +41,7 @@ filenameMediaQuery = ( options ) ->
 								"( #{ _.feature }: #{ _.value }#{ _.unit } )"
 					).join ' and '
 
-				query += ' {' + ( if block.length then "\n\t#{ block.split( '\n' ).join( '\n\t' ) }\n" else '' ) + '}'
+				query + ' {' + ( if block.length then "\n\t#{ block.split( '\n' ).join( '\n\t' ) }\n" else '' ) + '}'
 			evaluation: ( mediaType, expressions ) -> [ mediaType, expressions ]
 	}, options
 

@@ -36,7 +36,7 @@
               }
             }).join(' and ');
           }
-          return query += ' {' + (block.length ? "\n\t" + (block.split('\n').join('\n\t')) + "\n" : '') + '}';
+          return query + ' {' + (block.length ? "\n\t" + (block.split('\n').join('\n\t')) + "\n" : '') + '}';
         },
         evaluation: function(mediaType, expressions) {
           return [mediaType, expressions];
